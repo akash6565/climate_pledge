@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Climate Action Pledge</title>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #f7fcf8;
+      color: #222;
+      margin: 0;
+      padding: 0;
+    }
+    header, section {
+      padding: 60px 20px;
+      text-align: center;
+    }
+    header {
+      background: linear-gradient(120deg, #009688, #4CAF50);
+      color: white;
+    }
+    h1, h2 {
+      margin-bottom: 20px;
+    }
+    .btn {
+      background: #4CAF50;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .btn:hover {
+      background: #388E3C;
+    }
+    form {
+      max-width: 600px;
+      margin: 0 auto;
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    input, select {
+      width: 100%;
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    .certificate {
+      margin-top: 40px;
+      text-align: center;
+    }
+    #pledgeWall {
+      margin-top: 40px;
+      overflow-x: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 10px;
+      border-bottom: 1px solid #ccc;
+    }
+    .kpi-container {
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+    .kpi {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      width: 200px;
+      margin: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🌍 Climate Action Pledge</h1>
+    <p>Together, small steps make a big difference!</p>
+    <button class="btn" onclick="document.getElementById('pledgeForm').scrollIntoView({behavior:'smooth'})">Take the Pledge</button>
+  </header>
+
+  <section>
+    <h2>Live KPIs</h2>
+    <div class="kpi-container">
+      <div class="kpi"><h3>Target</h3><p>1,000,000 pledges</p></div>
+      <div class="kpi"><h3>Achieved</h3><p id="pledgeCount">0</p></div>
+      <div class="kpi"><h3>Students</h3><p id="studentCount">0</p></div>
+      <div class="kpi"><h3>Professionals</h3><p id="proCount">0</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Why Take Climate Action</h2>
+    <p>Individual responsibility adds up to collective impact. Join the global movement for a sustainable planet.</p>
+  </section>
+
+  <section id="formSection">
+    <h2>Take the Pledge</h2>
+    <form id="pledgeForm">
+      <input type="text" id="name" placeholder="Name" required />
+      <input type="email" id="email" placeholder="Email" required />
+      <input type="tel" id="mobile" placeholder="Mobile Number" required />
+      <select id="state" required>
+        <option value="">Select State</option>
+        <option>Andhra Pradesh</option>
+        <option>Delhi</option>
+        <option>Tamil Nadu</option>
+        <option>Maharashtra</option>
+      </select>
+      <select id="profile" required>
+        <option value="">Profile Type</option>
+        <option>Student</option>
+        <option>Working Professional</option>
+        <option>Other</option>
+      </select>
+
+      <p><strong>Commitment Themes</strong></p>
+      <label><input type="checkbox" name="commitments" value="Recycle"/> Recycle regularly ♻️</label><br>
+      <label><input type="checkbox" name="commitments" value="Public Transport"/> Use public transport 🚍</label><br>
+      <label><input type="checkbox" name="commitments" value="Plant Trees"/> Plant more trees 🌳</label><br>
+
+      <button type="submit" class="btn">Submit</button>
+      <p style="font-size:12px;color:#555;margin-top:10px;">Your mobile and email are used only for validation and never shown publicly.</p>
+    </form>
+  </section>
+
+  <section class="certificate" id="certificateSection" style="display:none;">
+    <h2>🎉 Certificate of Commitment</h2>
+    <svg id="certificateSVG" width="400" height="250" xmlns="http://www.w3.org/2000/svg">
+      <rect width="100%" height="100%" fill="#E8F5E9" stroke="#4CAF50" stroke-width="4" rx="15"/>
+      <text x="50%" y="60" text-anchor="middle" font-size="22" fill="#388E3C" font-weight="bold">Climate Action Pledge</text>
+      <text id="certName" x="50%" y="120" text-anchor="middle" font-size="18" fill="#222">Name</text>
+      <text x="50%" y="160" text-anchor="middle" font-size="14" fill="#555">Cool Enough to Care!</text>
+      <text id="certStars" x="50%" y="200" text-anchor="middle" font-size="18" fill="#FFB300">⭐⭐⭐</text>
+    </svg>
+    <p><button class="btn" onclick="downloadCertificate()">Download Certificate</button></p>
+  </section>
+
+  <section id="pledgeWall">
+    <h2>🌱 Public Pledge Wall</h2>
+    <table>
+      <thead><tr><th>Pledge ID</th><th>Name</th><th>Date</th><th>State</th><th>Profile</th><th>Love for Planet</th></tr></thead>
+      <tbody id="wallBody"></tbody>
+    </table>
+  </section>
+
+  <script>
+    // Google Apps Script Web App URL (to be replaced with your deployed script URL)
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxZhZIxa8J0gy-BQcpAuThIDRk_mIK711T2MQQvST6C7wtcV7lQlLeTRxT59iy60R8N-w/exec';
+
+    document.getElementById('pledgeForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const commitments = [...document.querySelectorAll('input[name="commitments"]:checked')].map(c => c.value);
+      const data = {
+        name: formData.get('name') || document.getElementById('name').value,
+        email: formData.get('email') || document.getElementById('email').value,
+        mobile: formData.get('mobile') || document.getElementById('mobile').value,
+        state: formData.get('state') || document.getElementById('state').value,
+        profile: formData.get('profile') || document.getElementById('profile').value,
+        commitments: commitments.join(',')
+      };
+
+      // POST to Google Sheets
+      await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: new URLSearchParams(data)});
+
+      // Display certificate
+      document.getElementById('certName').textContent = data.name;
+      document.getElementById('certStars').textContent = '⭐'.repeat(commitments.length || 1);
+      document.getElementById('certificateSection').style.display = 'block';
+
+      // Simulate adding to wall locally
+      addToWall(data);
+    });
+
+    function addToWall(data) {
+      const table = document.getElementById('wallBody');
+      const row = document.createElement('tr');
+      const id = Math.floor(Math.random() * 10000);
+      const date = new Date().toLocaleDateString();
+      row.innerHTML = `<td>${id}</td><td>${data.name}</td><td>${date}</td><td>${data.state}</td><td>${data.profile}</td><td>${'⭐'.repeat(data.commitments.split(',').length)}</td>`;
+      table.prepend(row);
+
+      // Update KPIs
+      updateKPI(data);
+    }
+
+    function updateKPI(data) {
+      const pledgeCount = document.getElementById('pledgeCount');
+      pledgeCount.textContent = parseInt(pledgeCount.textContent) + 1;
+      if (data.profile === 'Student') document.getElementById('studentCount').textContent = parseInt(document.getElementById('studentCount').textContent) + 1;
+      if (data.profile === 'Working Professional') document.getElementById('proCount').textContent = parseInt(document.getElementById('proCount').textContent) + 1;
+    }
+
+    function downloadCertificate() {
+      const svg = document.getElementById('certificateSVG');
+      const serializer = new XMLSerializer();
+      const source = serializer.serializeToString(svg);
+      const blob = new Blob([source], {type: 'image/svg+xml;charset=utf-8'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'Climate_Pledge_Certificate.svg';
+      a.click();
+    }
+  </script>
+</body>
+</html>
